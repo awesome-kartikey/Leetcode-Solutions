@@ -1,19 +1,24 @@
 var merge = function(intervals) {
-    if (intervals.length === 0) return [];
-
-    // Sort intervals based on the starting time
+    if (intervals.length <= 1) return intervals;
+    
     intervals.sort((a, b) => a[0] - b[0]);
-
-    const merged = [];
-    for (const interval of intervals) {
-        // If the merged list is empty or there is no overlap
-        if (merged.length === 0 || merged[merged.length - 1][1] < interval[0]) {
-            merged.push(interval);
+    
+    const result = [];
+    let current = intervals[0];
+    
+    for (let i = 1; i < intervals.length; i++) {
+        const next = intervals[i];
+        
+        if (current[1] >= next[0]) {
+            // Merge: extend current interval
+            current[1] = Math.max(current[1], next[1]);
         } else {
-            // There is overlap, merge the intervals
-            merged[merged.length - 1][1] = Math.max(merged[merged.length - 1][1], interval[1]);
+            // No overlap: save current and move to next
+            result.push(current);
+            current = next;
         }
     }
-
-    return merged;
+    
+    result.push(current); // Add the last interval
+    return result;
 };
